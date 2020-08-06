@@ -1,7 +1,9 @@
 module.exports = {
-    createProduct: (req, res, next) => {
+    create: (req, res, next) => {
         const db = req.app.get("db");
-        db.create_product()
+        const {name, description, price, image_url} = req.body;
+
+        db.create_product([name, description, price, image_url])
         .then(() => {
             res.sendStatus(200);  
         }).catch(err => {
@@ -11,7 +13,8 @@ module.exports = {
     },
     getOne: (req, res, next) => {
         const db = req.app.get("db");
-        db.read_product()
+        const {product_id} = req.params;
+        db.read_product(product_id)
         .then(product => {
             res.status(200).send(product)
         }).catch(err => {
@@ -31,9 +34,10 @@ module.exports = {
     },
     update: (req, res, next) => {
         const db = req.app.get("db");
-        db.update_product()
+        const {params, query} = req;
+        db.update_product([params.product_id, query.description])
         .then(() => {
-            res.status(200).send(product)
+            res.sendStatus(200)
         }).catch(err => {
             res.status(500).send({errorMessage: "Uh, oh! Something went wrong."})
             console.log(err)
@@ -41,9 +45,10 @@ module.exports = {
     },
     delete: (req, res, next) => {
         const db = req.app.get("db")
-        db.delete_product()
+        const {product_id} = req.params;
+        db.delete_product(product_id)
         .then(() => {
-            res.status(200).send(products)
+            res.sendStatus(200)
         }).catch(err => {
             res.status(500).send({errorMessage: "Uh, oh! Something went wrong."})
         });
